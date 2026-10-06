@@ -1,0 +1,19 @@
+{
+  "name": "اوقاتِ نماز — ضلع سوات",
+  "short_name": "اوقاتِ نماز",
+  "description": "حضرت مولانا فضل محمد رحمہ اللہ کا دائمی نقشہ اوقاتِ نماز، ضلع سوات",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f2e22",
+  "theme_color": "#16493a",
+  "lang": "ur",
+  "dir": "rtl",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

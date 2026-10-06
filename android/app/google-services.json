@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1003977277930",
+    "project_id": "qurb-e69ce",
+    "storage_bucket": "qurb-e69ce.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003977277930:android:b83c15b4b8ac1e901fb293",
+        "android_client_info": {
+          "package_name": "com.muftimaaz.qurb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzKpfrexFabZwvTJV8w6eTAJXRwS0tYXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
