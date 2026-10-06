@@ -14,8 +14,17 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/lib/android/sdk/system-images
+          sudo rm -rf /usr/local/lib/android/sdk/emulator
+          sudo docker system prune -af || true
+          df -h
+
       - name: Setup Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -25,7 +34,10 @@ jobs:
         with:
           flutter-version: '3.38.9'
           channel: stable
-          cache: true
+
+      - name: Use Android SDK 36
+        run: |
+          sed -i 's/compileSdkVersion 35/compileSdkVersion 36/' android/app/build.gradle
 
       - name: Flutter Pub Get
         run: flutter pub get
