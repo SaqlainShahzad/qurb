@@ -93,9 +93,9 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
       final connectivityResult = await (Connectivity().checkConnectivity());
       _updateConnectionStatus(connectivityResult);
       _connSub = Connectivity().onConnectivityChanged.listen(
-        (result) => _updateConnectionStatus(result),
-        onError: (_) {},
-      );
+            (result) => _updateConnectionStatus(result),
+            onError: (_) {},
+          );
     } catch (_) {}
   }
 
@@ -145,7 +145,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
 
       final double dP20 = -3.0 * sinTheta * cosTheta;
       final double P21 = sqrt(3.0) * sinTheta * cosTheta;
-      final double dP21 = sqrt(3.0) * (cosTheta * cosTheta - sinTheta * sinTheta);
+      final double dP21 =
+          sqrt(3.0) * (cosTheta * cosTheta - sinTheta * sinTheta);
       final double dP22 = sqrt(3.0) * sinTheta * cosTheta;
 
       final double x = (g10 * dP10 +
@@ -154,9 +155,12 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
           (g21 * cosPhi + h21 * sinPhi) * dP21 +
           (g22 * cos2Phi + h22 * sin2Phi) * dP22);
 
-      final double y = -((1.0 / sinTheta) * (-g11 * sinPhi + h11 * cosPhi) * P11 +
-          (1.0 / sinTheta) * (-g21 * sinPhi + h21 * cosPhi) * P21 +
-          (2.0 / sinTheta) * (-g22 * sin2Phi + h22 * cos2Phi) * (sqrt(3.0) / 2.0 * sinTheta * sinTheta));
+      final double y =
+          -((1.0 / sinTheta) * (-g11 * sinPhi + h11 * cosPhi) * P11 +
+              (1.0 / sinTheta) * (-g21 * sinPhi + h21 * cosPhi) * P21 +
+              (2.0 / sinTheta) *
+                  (-g22 * sin2Phi + h22 * cos2Phi) *
+                  (sqrt(3.0) / 2.0 * sinTheta * sinTheta));
 
       return atan2(y, x) * 180.0 / pi;
     } catch (_) {
@@ -175,7 +179,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
     final prefs = await SharedPreferences.getInstance();
 
     // Instant load from cache
-    if (prefs.containsKey('qibla_cached_lat') && prefs.containsKey('qibla_cached_lon')) {
+    if (prefs.containsKey('qibla_cached_lat') &&
+        prefs.containsKey('qibla_cached_lon')) {
       userLat = prefs.getDouble('qibla_cached_lat');
       userLon = prefs.getDouble('qibla_cached_lon');
       _calculateQibla();
@@ -203,7 +208,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
         if (permissionGranted != PermissionStatus.granted) {
           if (userLat == null && mounted) {
             setState(() {
-              locationError = 'Location permission denied. Please allow location access.';
+              locationError =
+                  'Location permission denied. Please allow location access.';
             });
           }
           return;
@@ -211,8 +217,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
       }
 
       final LocationData locationData = await location.getLocation().timeout(
-        const Duration(seconds: 8),
-      );
+            const Duration(seconds: 8),
+          );
 
       if (locationData.latitude != null && locationData.longitude != null) {
         userLat = locationData.latitude;
@@ -281,7 +287,9 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
     });
 
     try {
-      _accelSub = accelerometerEventStream(samplingPeriod: SensorInterval.gameInterval).listen(
+      _accelSub =
+          accelerometerEventStream(samplingPeriod: SensorInterval.gameInterval)
+              .listen(
         (AccelerometerEvent event) {
           if (!_hasAccel) {
             _accelerometerValues[0] = event.x;
@@ -289,9 +297,12 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
             _accelerometerValues[2] = event.z;
             _hasAccel = true;
           } else {
-            _accelerometerValues[0] = _alpha * event.x + (1.0 - _alpha) * _accelerometerValues[0];
-            _accelerometerValues[1] = _alpha * event.y + (1.0 - _alpha) * _accelerometerValues[1];
-            _accelerometerValues[2] = _alpha * event.z + (1.0 - _alpha) * _accelerometerValues[2];
+            _accelerometerValues[0] =
+                _alpha * event.x + (1.0 - _alpha) * _accelerometerValues[0];
+            _accelerometerValues[1] =
+                _alpha * event.y + (1.0 - _alpha) * _accelerometerValues[1];
+            _accelerometerValues[2] =
+                _alpha * event.z + (1.0 - _alpha) * _accelerometerValues[2];
           }
           _updateHeading();
         },
@@ -305,7 +316,9 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
     }
 
     try {
-      _magSub = magnetometerEventStream(samplingPeriod: SensorInterval.gameInterval).listen(
+      _magSub =
+          magnetometerEventStream(samplingPeriod: SensorInterval.gameInterval)
+              .listen(
         (MagnetometerEvent event) {
           if (!_isSensorActive) {
             _isSensorActive = true;
@@ -321,9 +334,12 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
             _magnetometerValues[2] = event.z;
             _hasMag = true;
           } else {
-            _magnetometerValues[0] = _alpha * event.x + (1.0 - _alpha) * _magnetometerValues[0];
-            _magnetometerValues[1] = _alpha * event.y + (1.0 - _alpha) * _magnetometerValues[1];
-            _magnetometerValues[2] = _alpha * event.z + (1.0 - _alpha) * _magnetometerValues[2];
+            _magnetometerValues[0] =
+                _alpha * event.x + (1.0 - _alpha) * _magnetometerValues[0];
+            _magnetometerValues[1] =
+                _alpha * event.y + (1.0 - _alpha) * _magnetometerValues[1];
+            _magnetometerValues[2] =
+                _alpha * event.z + (1.0 - _alpha) * _magnetometerValues[2];
           }
           _updateHeading();
         },
@@ -453,7 +469,24 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
   }
 
   String _getCardinal(double deg) {
-    const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    const directions = [
+      'N',
+      'NNE',
+      'NE',
+      'ENE',
+      'E',
+      'ESE',
+      'SE',
+      'SSE',
+      'S',
+      'SSW',
+      'SW',
+      'WSW',
+      'W',
+      'WNW',
+      'NW',
+      'NNW'
+    ];
     int idx = ((deg + 11.25) % 360 / 22.5).floor();
     return directions[idx % 16];
   }
@@ -465,7 +498,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
       appBar: AppBar(
         title: const Text(
           'Qibla Compass',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -489,7 +523,9 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 14),
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
-                color: isOffline ? Colors.orange.withOpacity(0.15) : Colors.green.withOpacity(0.15),
+                color: isOffline
+                    ? Colors.orange.withOpacity(0.15)
+                    : Colors.green.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isOffline ? Colors.orange : Colors.green,
@@ -505,7 +541,9 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    isOffline ? 'Offline - Using cached location' : 'Online - Live location',
+                    isOffline
+                        ? 'Offline - Using cached location'
+                        : 'Online - Live location',
                     style: TextStyle(
                       color: isOffline ? Colors.orange : Colors.green,
                       fontWeight: FontWeight.w600,
@@ -538,7 +576,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
                 children: [
                   Text(
                     '${userLat!.toStringAsFixed(4)}°, ${userLon!.toStringAsFixed(4)}°',
-                    style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
+                    style: TextStyle(
+                        color: Colors.white.withOpacity(0.7), fontSize: 14),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -556,11 +595,13 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
             const SizedBox(height: 10),
             if (_isAligned)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: const Color(0xFF2E7D32).withOpacity(0.3),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFF4CAF50), width: 1.5),
+                  border:
+                      Border.all(color: const Color(0xFF4CAF50), width: 1.5),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF4CAF50).withOpacity(0.3),
@@ -572,7 +613,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
+                    Icon(Icons.check_circle,
+                        color: Color(0xFF4CAF50), size: 18),
                     SizedBox(width: 8),
                     Text(
                       'Facing Kaaba / قبلہ رخ درست ہے',
@@ -588,7 +630,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
             else if (!_hasSensors)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.amber.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -597,12 +640,14 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.explore_off, color: Colors.amber, size: 18),
+                    const Icon(Icons.explore_off,
+                        color: Colors.amber, size: 18),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
                         'Compass sensor unavailable. Face ${qiblaDirection.toStringAsFixed(0)}° (${_getCardinal(qiblaDirection)}) to orient toward Kaaba.',
-                        style: const TextStyle(color: Colors.white70, fontSize: 11),
+                        style: const TextStyle(
+                            color: Colors.white70, fontSize: 11),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -611,7 +656,8 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
               )
             else if (_isTilted)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.amber.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
@@ -619,7 +665,10 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
                 ),
                 child: const Text(
                   'Hold phone flat horizontally',
-                  style: TextStyle(color: Colors.amber, fontSize: 12, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
 
@@ -633,195 +682,221 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
                 final double needleAngle = _continuousNeedleAngle * pi / 180.0;
                 return RepaintBoundary(
                   child: Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Outer Glow when aligned with Kaaba
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    width: 300,
-                    height: 300,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: _isAligned
-                          ? [
-                              BoxShadow(
-                                color: const Color(0xFFD4AF37).withOpacity(0.45),
-                                blurRadius: 30,
-                                spreadRadius: 4,
-                              ),
-                            ]
-                          : [],
-                    ),
-                  ),
-
-                  // Rotating Compass Dial
-                  Transform.rotate(
-                    angle: dialAngle,
-                    child: Container(
-                      width: 290,
-                      height: 290,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF131B2E),
-                        border: Border.all(
-                          color: _isAligned
-                              ? const Color(0xFFD4AF37)
-                              : Colors.white.withOpacity(0.2),
-                          width: _isAligned ? 3 : 2,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Outer Glow when aligned with Kaaba
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          width: 300,
+                          height: 300,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: _isAligned
+                                ? [
+                                    BoxShadow(
+                                      color: const Color(0xFFD4AF37)
+                                          .withOpacity(0.45),
+                                      blurRadius: 30,
+                                      spreadRadius: 4,
+                                    ),
+                                  ]
+                                : [],
+                          ),
                         ),
-                      ),
-                      child: Stack(
-                        children: [
-                          // Cardinal Directions
-                          const Positioned(
-                            top: 10,
-                            left: 0,
-                            right: 0,
-                            child: Text(
-                              'N',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 22),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 10,
-                            left: 0,
-                            right: 0,
-                            child: Text(
-                              'S',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white.withOpacity(0.6), fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            bottom: 0,
-                            right: 12,
-                            child: Center(
-                              child: Text(
-                                'E',
-                                style: TextStyle(color: Colors.white.withOpacity(0.6), fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            bottom: 0,
-                            left: 12,
-                            child: Center(
-                              child: Text(
-                                'W',
-                                style: TextStyle(color: Colors.white.withOpacity(0.6), fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                            ),
-                          ),
 
-                          // Compass Dial Crosshairs
-                          Center(
-                            child: Container(
-                              width: 1,
-                              height: 240,
-                              color: Colors.white.withOpacity(0.08),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 240,
-                              height: 1,
-                              color: Colors.white.withOpacity(0.08),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Rotating Qibla Needle (pointing directly to Kaaba relative to device)
-                  Transform.rotate(
-                    angle: needleAngle,
-                    child: SizedBox(
-                      width: 240,
-                      height: 240,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Needle Shaft
-                          Positioned(
-                            top: 24,
-                            bottom: 120,
-                            child: Container(
-                              width: 4,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Color(0xFFD4AF37), Colors.transparent],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ),
-                                borderRadius: BorderRadius.circular(2),
+                        // Rotating Compass Dial
+                        Transform.rotate(
+                          angle: dialAngle,
+                          child: Container(
+                            width: 290,
+                            height: 290,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFF131B2E),
+                              border: Border.all(
+                                color: _isAligned
+                                    ? const Color(0xFFD4AF37)
+                                    : Colors.white.withOpacity(0.2),
+                                width: _isAligned ? 3 : 2,
                               ),
                             ),
-                          ),
-                          // Kaaba / Needle Head Icon
-                          Positioned(
-                            top: 0,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
+                            child: Stack(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color: _isAligned ? const Color(0xFF4CAF50) : const Color(0xFFD4AF37),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: (_isAligned ? const Color(0xFF4CAF50) : const Color(0xFFD4AF37)).withOpacity(0.6),
-                                        blurRadius: 8,
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Icon(
-                                    Icons.explore,
-                                    color: Colors.black87,
-                                    size: 22,
+                                // Cardinal Directions
+                                const Positioned(
+                                  top: 10,
+                                  left: 0,
+                                  right: 0,
+                                  child: Text(
+                                    'N',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22),
                                   ),
                                 ),
-                                const SizedBox(height: 2),
-                                const Text(
-                                  'قبلہ',
-                                  style: TextStyle(
-                                    color: Color(0xFFD4AF37),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
+                                Positioned(
+                                  bottom: 10,
+                                  left: 0,
+                                  right: 0,
+                                  child: Text(
+                                    'S',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.6),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  bottom: 0,
+                                  right: 12,
+                                  child: Center(
+                                    child: Text(
+                                      'E',
+                                      style: TextStyle(
+                                          color: Colors.white.withOpacity(0.6),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  bottom: 0,
+                                  left: 12,
+                                  child: Center(
+                                    child: Text(
+                                      'W',
+                                      style: TextStyle(
+                                          color: Colors.white.withOpacity(0.6),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+
+                                // Compass Dial Crosshairs
+                                Center(
+                                  child: Container(
+                                    width: 1,
+                                    height: 240,
+                                    color: Colors.white.withOpacity(0.08),
+                                  ),
+                                ),
+                                Center(
+                                  child: Container(
+                                    width: 240,
+                                    height: 1,
+                                    color: Colors.white.withOpacity(0.08),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
 
-                  // Center Pivot Pin
-                  Container(
-                    width: 18,
-                    height: 18,
-                    decoration: BoxDecoration(
-                      color: _isAligned ? const Color(0xFF4CAF50) : const Color(0xFFD4AF37),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.black54, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: (_isAligned ? const Color(0xFF4CAF50) : const Color(0xFFD4AF37)).withOpacity(0.5),
-                          blurRadius: 6,
+                        // Rotating Qibla Needle (pointing directly to Kaaba relative to device)
+                        Transform.rotate(
+                          angle: needleAngle,
+                          child: SizedBox(
+                            width: 240,
+                            height: 240,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Needle Shaft
+                                Positioned(
+                                  top: 24,
+                                  bottom: 120,
+                                  child: Container(
+                                    width: 4,
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFFD4AF37),
+                                          Colors.transparent
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  ),
+                                ),
+                                // Kaaba / Needle Head Icon
+                                Positioned(
+                                  top: 0,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: _isAligned
+                                              ? const Color(0xFF4CAF50)
+                                              : const Color(0xFFD4AF37),
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: (_isAligned
+                                                      ? const Color(0xFF4CAF50)
+                                                      : const Color(0xFFD4AF37))
+                                                  .withOpacity(0.6),
+                                              blurRadius: 8,
+                                            ),
+                                          ],
+                                        ),
+                                        child: const Icon(
+                                          Icons.explore,
+                                          color: Colors.black87,
+                                          size: 22,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      const Text(
+                                        'قبلہ',
+                                        style: TextStyle(
+                                          color: Color(0xFFD4AF37),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Center Pivot Pin
+                        Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: _isAligned
+                                ? const Color(0xFF4CAF50)
+                                : const Color(0xFFD4AF37),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.black54, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: (_isAligned
+                                        ? const Color(0xFF4CAF50)
+                                        : const Color(0xFFD4AF37))
+                                    .withOpacity(0.5),
+                                blurRadius: 6,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
                 );
               },
             ),
@@ -832,43 +907,54 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
             ValueListenableBuilder<int>(
               valueListenable: _uiTick,
               builder: (context, _, __) => Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF131B2E),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF131B2E),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildReadingItem(
+                      label: 'Heading',
+                      value:
+                          '${deviceHeading.toStringAsFixed(0)}° ${_getCardinal(deviceHeading)}',
+                      color: Colors.white,
+                    ),
+                    Container(
+                        width: 1,
+                        height: 32,
+                        color: Colors.white.withOpacity(0.15)),
+                    _buildReadingItem(
+                      label: 'Qibla',
+                      value:
+                          '${qiblaDirection.toStringAsFixed(0)}° ${_getCardinal(qiblaDirection)}',
+                      color: const Color(0xFFD4AF37),
+                    ),
+                    Container(
+                        width: 1,
+                        height: 32,
+                        color: Colors.white.withOpacity(0.15)),
+                    _buildReadingItem(
+                      label: 'Declination',
+                      value:
+                          '${declination >= 0 ? '+' : ''}${declination.toStringAsFixed(1)}°',
+                      color: Colors.white70,
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildReadingItem(
-                    label: 'Heading',
-                    value: '${deviceHeading.toStringAsFixed(0)}° ${_getCardinal(deviceHeading)}',
-                    color: Colors.white,
-                  ),
-                  Container(width: 1, height: 32, color: Colors.white.withOpacity(0.15)),
-                  _buildReadingItem(
-                    label: 'Qibla',
-                    value: '${qiblaDirection.toStringAsFixed(0)}° ${_getCardinal(qiblaDirection)}',
-                    color: const Color(0xFFD4AF37),
-                  ),
-                  Container(width: 1, height: 32, color: Colors.white.withOpacity(0.15)),
-                  _buildReadingItem(
-                    label: 'Declination',
-                    value: '${declination >= 0 ? '+' : ''}${declination.toStringAsFixed(1)}°',
-                    color: Colors.white70,
-                  ),
-                ],
-              ),
-            ),
             ),
 
             Padding(
               padding: const EdgeInsets.only(top: 12.0, bottom: 20.0),
               child: Text(
                 'Hold phone flat and away from magnets or metal objects',
-                style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11),
+                style: TextStyle(
+                    color: Colors.white.withOpacity(0.5), fontSize: 11),
               ),
             ),
           ],
@@ -887,12 +973,16 @@ class _QiblaScreenState extends State<QiblaScreen> with WidgetsBindingObserver {
       children: [
         Text(
           label,
-          style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.w500),
+          style: TextStyle(
+              color: Colors.white.withOpacity(0.5),
+              fontSize: 10,
+              fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: color, fontSize: 15, fontWeight: FontWeight.bold),
         ),
       ],
     );

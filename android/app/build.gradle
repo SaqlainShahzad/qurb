@@ -33,7 +33,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.muftimaaz.qurb"
-    compileSdkVersion 35
+    compileSdkVersion 36
     ndkVersion = "25.1.8937393"
 
     compileOptions {
