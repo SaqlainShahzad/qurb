@@ -21,8 +21,6 @@ import 'pdf_library_screen.dart';
 import 'pdf_viewer_screen.dart';
 import 'package:qurb_app/services/notification_service.dart';
 
-
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:qurb_app/features/qibla/qibla_screen.dart';
@@ -88,7 +86,6 @@ Future<void> _initDeferredServices() async {
 }
 
 class QurbApp extends StatelessWidget {
-
   const QurbApp({super.key});
 
   static FirebaseAnalytics? _analytics;
@@ -104,31 +101,30 @@ class QurbApp extends StatelessWidget {
     }
 
     return MaterialApp(
-          title: 'Qurb',
-          debugShowCheckedModeBanner: false,
-          navigatorObservers: _observer != null
-              ? <NavigatorObserver>[_observer!]
-              : const <NavigatorObserver>[],
-          theme: ThemeData(
-            fontFamily: 'Al Mushaf',
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF0F0A07),
-              brightness: Brightness.light,
-            ),
-            useMaterial3: true,
-          ),
-          darkTheme: ThemeData(
-            fontFamily: 'Al Mushaf',
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF0F0A07),
-              brightness: Brightness.dark,
-            ),
-            scaffoldBackgroundColor: const Color(0xFF0F0A07),
-            useMaterial3: true,
-          ),
-          home: const QurbWebViewScreen(),
-        );
-
+      title: 'Qurb',
+      debugShowCheckedModeBanner: false,
+      navigatorObservers: _observer != null
+          ? <NavigatorObserver>[_observer!]
+          : const <NavigatorObserver>[],
+      theme: ThemeData(
+        fontFamily: 'Al Mushaf',
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF0F0A07),
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        fontFamily: 'Al Mushaf',
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF0F0A07),
+          brightness: Brightness.dark,
+        ),
+        scaffoldBackgroundColor: const Color(0xFF0F0A07),
+        useMaterial3: true,
+      ),
+      home: const QurbWebViewScreen(),
+    );
   }
 }
 
@@ -148,7 +144,7 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
     super.initState();
     // Request Camera & Location permissions explicitly before webview loads
     requestCameraAndLocation();
-    
+
     // 1. Pre-warm WebView Controller asynchronously to not block the first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -196,7 +192,7 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
     // 3. Request Android 13+ notification, exact alarm, and battery optimization permissions
     try {
       await NotificationService.requestPermissions();
-      
+
       // Request FCM permission
       await FirebaseMessaging.instance.requestPermission(
         alert: true,
@@ -235,13 +231,19 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
         priority: Priority.high,
         ticker: 'Prayer Time Azan',
         color: const Color(0xFFD4AF37),
-        sound: isAzan ? const RawResourceAndroidNotificationSound('azzanforapp') : null,
-        audioAttributesUsage: isAzan ? AudioAttributesUsage.alarm : AudioAttributesUsage.notification,
+        sound: isAzan
+            ? const RawResourceAndroidNotificationSound('azzanforapp')
+            : null,
+        audioAttributesUsage: isAzan
+            ? AudioAttributesUsage.alarm
+            : AudioAttributesUsage.notification,
         enableVibration: true,
         playSound: true,
         fullScreenIntent: isAzan,
         visibility: NotificationVisibility.public,
-        category: isAzan ? AndroidNotificationCategory.alarm : AndroidNotificationCategory.reminder,
+        category: isAzan
+            ? AndroidNotificationCategory.alarm
+            : AndroidNotificationCategory.reminder,
         actions: isAzan
             ? <AndroidNotificationAction>[
                 const AndroidNotificationAction(
@@ -273,25 +275,37 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
       final prefs = await SharedPreferences.getInstance();
       final enabled = prefsData['enabled'] == true;
       await prefs.setBool('notifications_enabled', enabled);
-      await prefs.setString('salah_prayer_notifications_v3', jsonEncode(prefsData));
+      await prefs.setString(
+          'salah_prayer_notifications_v3', jsonEncode(prefsData));
 
       final prayers = prefsData['prayers'] as Map<String, dynamic>?;
       if (prayers != null) {
-        await prefs.setBool('prayer_fajr_enabled', prayers['fajr'] != false && prayers['fajr'] != 'off');
-        await prefs.setBool('prayer_dhuhr_enabled', prayers['dhuhr'] != false && prayers['dhuhr'] != 'off');
-        await prefs.setBool('prayer_asr_enabled', prayers['asr'] != false && prayers['asr'] != 'off');
-        await prefs.setBool('prayer_maghrib_enabled', prayers['maghrib'] != false && prayers['maghrib'] != 'off');
-        await prefs.setBool('prayer_isha_enabled', prayers['isha'] != false && prayers['isha'] != 'off');
+        await prefs.setBool('prayer_fajr_enabled',
+            prayers['fajr'] != false && prayers['fajr'] != 'off');
+        await prefs.setBool('prayer_dhuhr_enabled',
+            prayers['dhuhr'] != false && prayers['dhuhr'] != 'off');
+        await prefs.setBool('prayer_asr_enabled',
+            prayers['asr'] != false && prayers['asr'] != 'off');
+        await prefs.setBool('prayer_maghrib_enabled',
+            prayers['maghrib'] != false && prayers['maghrib'] != 'off');
+        await prefs.setBool('prayer_isha_enabled',
+            prayers['isha'] != false && prayers['isha'] != 'off');
       }
 
       final special = prefsData['special'] as Map<String, dynamic>?;
       if (special != null) {
-        await prefs.setBool('special_sunrise_enabled', special['sunrise'] != false && special['sunrise'] != 'off');
-        await prefs.setBool('special_sunset_enabled', special['sunset'] != false && special['sunset'] != 'off');
-        await prefs.setBool('special_makruh_start_enabled', special['makruhStart'] != false && special['makruhStart'] != 'off');
-        await prefs.setBool('special_makruh_end_enabled', special['makruhEnd'] != false && special['makruhEnd'] != 'off');
-        await prefs.setBool('special_iqamah_alert_enabled', special['iqamahAlert'] == true);
-        await prefs.setBool('special_jummah_alert_enabled', special['jummahAlert'] == true);
+        await prefs.setBool('special_sunrise_enabled',
+            special['sunrise'] != false && special['sunrise'] != 'off');
+        await prefs.setBool('special_sunset_enabled',
+            special['sunset'] != false && special['sunset'] != 'off');
+        await prefs.setBool('special_makruh_start_enabled',
+            special['makruhStart'] != false && special['makruhStart'] != 'off');
+        await prefs.setBool('special_makruh_end_enabled',
+            special['makruhEnd'] != false && special['makruhEnd'] != 'off');
+        await prefs.setBool(
+            'special_iqamah_alert_enabled', special['iqamahAlert'] == true);
+        await prefs.setBool(
+            'special_jummah_alert_enabled', special['jummahAlert'] == true);
       }
 
       final dawah = prefsData['dawah'] as Map<String, dynamic>?;
@@ -300,7 +314,8 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
         await prefs.setBool('dawah_maghrib_enabled', dawah['maghrib'] == true);
         await prefs.setBool('dawah_sleep_enabled', dawah['sleep'] == true);
       }
-      debugPrint('Saved notification preferences to SharedPreferences successfully.');
+      debugPrint(
+          'Saved notification preferences to SharedPreferences successfully.');
     } catch (e) {
       debugPrint('Error saving preferences to SharedPreferences: $e');
     }
@@ -337,7 +352,9 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
 
       final List<Map<String, dynamic>> dailyItems = [];
 
-      void addPrayerItem(String key, String titleUrdu, String titleEn, int defaultHour, int defaultMinute, {bool isPrayer = true}) {
+      void addPrayerItem(String key, String titleUrdu, String titleEn,
+          int defaultHour, int defaultMinute,
+          {bool isPrayer = true}) {
         int hour = defaultHour;
         int minute = defaultMinute;
 
@@ -354,17 +371,34 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
           minute = (val[1] as num).toInt();
         }
 
-        final targetDt = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute, 0);
+        final targetDt = tz.TZDateTime(
+            tz.local, now.year, now.month, now.day, hour, minute, 0);
 
         dailyItems.add({
-          'id': key == 'fajr' ? 101 : (key == 'dhuhr' ? 102 : (key == 'asr' ? 103 : (key == 'maghrib' ? 104 : (key == 'isha' ? 105 : (key == 'sunrise' ? 106 : (key == 'makruhStart' ? 107 : (key == 'makruhEnd' ? 108 : 109))))))),
+          'id': key == 'fajr'
+              ? 101
+              : (key == 'dhuhr'
+                  ? 102
+                  : (key == 'asr'
+                      ? 103
+                      : (key == 'maghrib'
+                          ? 104
+                          : (key == 'isha'
+                              ? 105
+                              : (key == 'sunrise'
+                                  ? 106
+                                  : (key == 'makruhStart'
+                                      ? 107
+                                      : (key == 'makruhEnd' ? 108 : 109))))))),
           'key': key,
           'prayerKey': key,
           'isPrayer': isPrayer,
           'isDaily': true,
           'channelId': isPrayer ? 'prayer_azan_channel' : 'qurb_prayer_channel',
           'title': isPrayer ? 'نمازِ $titleUrdu کا وقت' : titleUrdu,
-          'body': isPrayer ? '$titleUrdu کا وقت داخل ہوگیا، نماز کی تیاری کرو، نماز سے آپ کے مسائل حل ہوں گے۔' : '$titleUrdu کا وقت ہے۔',
+          'body': isPrayer
+              ? '$titleUrdu کا وقت داخل ہوگیا، نماز کی تیاری کرو، نماز سے آپ کے مسائل حل ہوں گے۔'
+              : '$titleUrdu کا وقت ہے۔',
           'time': targetDt.toIso8601String(),
         });
       }
@@ -386,16 +420,19 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
       }
 
       if (special.containsKey('sunrise')) {
-        addPrayerItem('sunrise', 'طلوعِ شمس', 'Sunrise', 7, 18, isPrayer: false);
+        addPrayerItem('sunrise', 'طلوعِ شمس', 'Sunrise', 7, 18,
+            isPrayer: false);
       }
       if (special.containsKey('tahajjud')) {
         addPrayerItem('tahajjud', 'تہجد', 'Tahajjud', 4, 30, isPrayer: true);
       }
       if (special.containsKey('makruhStart')) {
-        addPrayerItem('makruhStart', 'مکروہ وقت شروع', 'Makruh Start', 7, 18, isPrayer: false);
+        addPrayerItem('makruhStart', 'مکروہ وقت شروع', 'Makruh Start', 7, 18,
+            isPrayer: false);
       }
       if (special.containsKey('makruhEnd')) {
-        addPrayerItem('makruhEnd', 'مکروہ وقت ختم', 'Makruh End', 7, 38, isPrayer: false);
+        addPrayerItem('makruhEnd', 'مکروہ وقت ختم', 'Makruh End', 7, 38,
+            isPrayer: false);
       }
 
       await _schedulePrayerBatch(dailyItems);
@@ -404,7 +441,7 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
     }
   }
 
-    Future<void> _schedulePrayerBatch(List<dynamic> items) async {
+  Future<void> _schedulePrayerBatch(List<dynamic> items) async {
     try {
       final now = tz.TZDateTime.now(tz.local);
       final Set<int> scheduledIds = {};
@@ -423,7 +460,8 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
         final body = raw['body'] as String? ?? '';
         final isPrayer = raw['isPrayer'] == true;
         final rawChannel = raw['channelId'] as String?;
-        final channelId = rawChannel ?? (isPrayer ? 'prayer_azan_channel' : 'qurb_prayer_channel');
+        final channelId = rawChannel ??
+            (isPrayer ? 'prayer_azan_channel' : 'qurb_prayer_channel');
 
         // Deterministic globally unique ID from JavaScript payload.
         // Javascript uses: (Month * 10000) + (Day * 100) + TypeOffset
@@ -461,20 +499,43 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
 
         final androidDetails = AndroidNotificationDetails(
           isAzan ? 'prayer_azan_channel' : channelId,
-          isAzan ? 'Prayer Times & Azan' : (isSilent ? 'Silent Reminders' : (isAdhkar ? 'Qurb Daily Adhkar & Reminders' : (isTakbeer ? 'Soft Takbeer' : (isVibrate ? 'Vibration Only' : 'Qurb Prayer Reminders')))),
+          isAzan
+              ? 'Prayer Times & Azan'
+              : (isSilent
+                  ? 'Silent Reminders'
+                  : (isAdhkar
+                      ? 'Qurb Daily Adhkar & Reminders'
+                      : (isTakbeer
+                          ? 'Soft Takbeer'
+                          : (isVibrate
+                              ? 'Vibration Only'
+                              : 'Qurb Prayer Reminders')))),
           channelDescription: isAzan
               ? 'Exact prayer times with full Azan audio notifications'
-              : (isSilent ? 'Silent notifications for prayer times' : (isAdhkar ? 'Daily morning/evening adhkar and Jumuah reminders' : 'Daily Farz prayer, Sunrise, and Makruh time notifications for Qurb')),
-          importance: isSilent ? Importance.low : (isAzan ? Importance.max : Importance.high),
-          priority: isSilent ? Priority.low : (isAzan ? Priority.max : Priority.high),
+              : (isSilent
+                  ? 'Silent notifications for prayer times'
+                  : (isAdhkar
+                      ? 'Daily morning/evening adhkar and Jumuah reminders'
+                      : 'Daily Farz prayer, Sunrise, and Makruh time notifications for Qurb')),
+          importance: isSilent
+              ? Importance.low
+              : (isAzan ? Importance.max : Importance.high),
+          priority:
+              isSilent ? Priority.low : (isAzan ? Priority.max : Priority.high),
           ticker: isAzan ? 'Prayer Time Azan' : 'Qurb Reminder',
           color: const Color(0xFFD4AF37),
-          sound: isAzan ? const RawResourceAndroidNotificationSound('azzanforapp') : null,
-          audioAttributesUsage: isAzan ? AudioAttributesUsage.alarm : AudioAttributesUsage.notification,
+          sound: isAzan
+              ? const RawResourceAndroidNotificationSound('azzanforapp')
+              : null,
+          audioAttributesUsage: isAzan
+              ? AudioAttributesUsage.alarm
+              : AudioAttributesUsage.notification,
           enableVibration: !isSilent,
           fullScreenIntent: isAzan,
           visibility: NotificationVisibility.public,
-          category: isAzan ? AndroidNotificationCategory.alarm : AndroidNotificationCategory.reminder,
+          category: isAzan
+              ? AndroidNotificationCategory.alarm
+              : AndroidNotificationCategory.reminder,
           actions: isAzan
               ? const <AndroidNotificationAction>[
                   AndroidNotificationAction(
@@ -495,7 +556,8 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
             scheduledDate,
             NotificationDetails(android: androidDetails),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
           );
           scheduledCount++;
         } catch (e) {
@@ -507,19 +569,22 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
               scheduledDate,
               NotificationDetails(android: androidDetails),
               androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-              uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+              uiLocalNotificationDateInterpretation:
+                  UILocalNotificationDateInterpretation.absoluteTime,
             );
             scheduledCount++;
           } catch (_) {}
         }
       }
-      debugPrint('Successfully registered $scheduledCount recurring daily prayer/event alarms.');
+      debugPrint(
+          'Successfully registered $scheduledCount recurring daily prayer/event alarms.');
     } catch (e) {
       debugPrint('Error scheduling prayer batch: $e');
     }
   }
 
-  void _showNativeNotificationSettings(BuildContext context, Map<String, dynamic> times) {
+  void _showNativeNotificationSettings(
+      BuildContext context, Map<String, dynamic> times) {
     debugPrint("=== OPENING NATIVE MODAL ===");
     showModalBottomSheet(
       context: context,
@@ -532,7 +597,8 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
         return NativeSettingsSheet(
           times: times,
           onSyncNeeded: (String jsonState) {
-            _controller?.runJavaScript("localStorage.setItem('salah_prayer_notifications_v3', '$jsonState'); if(window.syncNativeToWeb) window.syncNativeToWeb();");
+            _controller?.runJavaScript(
+                "localStorage.setItem('salah_prayer_notifications_v3', '$jsonState'); if(window.syncNativeToWeb) window.syncNativeToWeb();");
           },
         );
       },
@@ -547,7 +613,8 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
       switch (action) {
         case 'openNativeSettings':
           if (!mounted) return;
-          _showNativeNotificationSettings(context, data['times'] as Map<String, dynamic>? ?? {});
+          _showNativeNotificationSettings(
+              context, data['times'] as Map<String, dynamic>? ?? {});
           break;
 
         case 'requestPermissions':
@@ -613,12 +680,14 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
             if (perm == loc.PermissionStatus.denied) {
               perm = await locationService.requestPermission();
             }
-            if (perm == loc.PermissionStatus.granted || perm == loc.PermissionStatus.grantedLimited) {
-              final locData = await locationService.getLocation().timeout(const Duration(seconds: 6));
+            if (perm == loc.PermissionStatus.granted ||
+                perm == loc.PermissionStatus.grantedLimited) {
+              final locData = await locationService
+                  .getLocation()
+                  .timeout(const Duration(seconds: 6));
               if (locData.latitude != null && locData.longitude != null) {
                 _controller?.runJavaScript(
-                  'if (window.onNativeLocationReceived) { window.onNativeLocationReceived(${locData.latitude}, ${locData.longitude}); }'
-                );
+                    'if (window.onNativeLocationReceived) { window.onNativeLocationReceived(${locData.latitude}, ${locData.longitude}); }');
               }
             }
           } catch (e) {
@@ -638,19 +707,25 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
           break;
 
         case 'scheduleAlarm':
-          final id = data['id'] as int? ?? (DateTime.now().millisecondsSinceEpoch ~/ 1000);
+          final id = data['id'] as int? ??
+              (DateTime.now().millisecondsSinceEpoch ~/ 1000);
           final title = data['title'] as String? ?? 'Qurb Prayer Alarm';
           final body = data['body'] as String? ?? 'Time for prayer';
-          final channelId = (data['channelId'] as String?) ?? 'prayer_azan_channel';
-          final isPrayer = (data['isPrayer'] == true) || (channelId == 'prayer_azan_channel');
+          final channelId =
+              (data['channelId'] as String?) ?? 'prayer_azan_channel';
+          final isPrayer = (data['isPrayer'] == true) ||
+              (channelId == 'prayer_azan_channel');
 
           DateTime scheduledDt;
           if (data['time'] != null) {
-            scheduledDt = DateTime.tryParse(data['time'].toString()) ?? DateTime.now();
+            scheduledDt =
+                DateTime.tryParse(data['time'].toString()) ?? DateTime.now();
           } else if (data['scheduledTime'] != null) {
-            scheduledDt = DateTime.tryParse(data['scheduledTime'].toString()) ?? DateTime.now();
+            scheduledDt = DateTime.tryParse(data['scheduledTime'].toString()) ??
+                DateTime.now();
           } else if (data['delaySeconds'] != null) {
-            scheduledDt = DateTime.now().add(Duration(seconds: (data['delaySeconds'] as num).toInt()));
+            scheduledDt = DateTime.now()
+                .add(Duration(seconds: (data['delaySeconds'] as num).toInt()));
           } else {
             scheduledDt = DateTime.now();
           }
@@ -672,8 +747,10 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
             await NotificationService.showTestNotification();
           } catch (e) {
             debugPrint('NotificationService test error: $e');
-            final title = data['title'] as String? ?? 'Qurb - Prayer Alerts & Reminders';
-            final body = data['body'] as String? ?? 'Prayer alerts and daily spiritual reminders are working properly!';
+            final title =
+                data['title'] as String? ?? 'Qurb - Prayer Alerts & Reminders';
+            final body = data['body'] as String? ??
+                'Prayer alerts and daily spiritual reminders are working properly!';
             await _showNativeNotification(
               id: 999,
               title: title,
@@ -682,7 +759,6 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
             );
           }
           break;
-
 
         case 'savePreference':
           try {
@@ -702,17 +778,21 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
           break;
 
         case 'scheduleNotification':
-          final id = data['id'] as int? ?? DateTime.now().millisecondsSinceEpoch ~/ 1000;
+          final id = data['id'] as int? ??
+              DateTime.now().millisecondsSinceEpoch ~/ 1000;
           final title = data['title'] as String? ?? 'Prayer Time';
           final body = data['body'] as String? ?? 'Time for prayer';
           final delaySeconds = data['delaySeconds'] as int? ?? 0;
-          final channelId = (data['channelId'] as String?) ?? 'prayer_azan_channel';
+          final channelId =
+              (data['channelId'] as String?) ?? 'prayer_azan_channel';
 
           if (delaySeconds <= 0) {
-            await _showNativeNotification(id: id, title: title, body: body, channelId: channelId);
+            await _showNativeNotification(
+                id: id, title: title, body: body, channelId: channelId);
           } else {
             try {
-              final scheduledDate = tz.TZDateTime.now(tz.local).add(Duration(seconds: delaySeconds));
+              final scheduledDate = tz.TZDateTime.now(tz.local)
+                  .add(Duration(seconds: delaySeconds));
               await NotificationService.scheduleAlarm(
                 id: id,
                 title: title,
@@ -723,7 +803,8 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
               );
             } catch (e) {
               debugPrint('Schedule notification error: $e');
-              await _showNativeNotification(id: id, title: title, body: body, channelId: channelId);
+              await _showNativeNotification(
+                  id: id, title: title, body: body, channelId: channelId);
             }
           }
           break;
@@ -772,7 +853,8 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
             await NotificationService.plugin.cancelAll();
             final prefs = await SharedPreferences.getInstance();
             await prefs.setBool('notifications_enabled', false);
-            debugPrint('All notifications cancelled and state disabled in SharedPreferences.');
+            debugPrint(
+                'All notifications cancelled and state disabled in SharedPreferences.');
           } catch (e) {
             debugPrint('Cancel notifications error: $e');
           }
@@ -880,13 +962,15 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
             onPageFinished: (String url) async {
               try {
                 final prefs = await SharedPreferences.getInstance();
-                final savedState = prefs.getString('salah_prayer_notifications_v3');
+                final savedState =
+                    prefs.getString('salah_prayer_notifications_v3');
                 String injectState = "";
                 if (savedState != null) {
                   final safeState = savedState.replaceAll("'", "\\'");
-                  injectState = "try { localStorage.setItem('salah_prayer_notifications_v3', '$safeState'); if(window.syncNativeToWeb) window.syncNativeToWeb(); } catch(e) {}";
+                  injectState =
+                      "try { localStorage.setItem('salah_prayer_notifications_v3', '$safeState'); if(window.syncNativeToWeb) window.syncNativeToWeb(); } catch(e) {}";
                 }
-                
+
                 controller.runJavaScript('''
                   window.isNativeApp = true;
                   window.__QURB_NATIVE__ = true;
@@ -915,14 +999,16 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
         );
 
       if (controller.platform is AndroidWebViewController) {
-        final androidController = controller.platform as AndroidWebViewController;
+        final androidController =
+            controller.platform as AndroidWebViewController;
         androidController.setMediaPlaybackRequiresUserGesture(false);
         androidController.setOnPlatformPermissionRequest((request) {
           request.grant();
         });
         androidController.setGeolocationPermissionsPromptCallbacks(
           onShowPrompt: (params) async {
-            return const GeolocationPermissionsResponse(allow: true, retain: true);
+            return const GeolocationPermissionsResponse(
+                allow: true, retain: true);
           },
         );
       }
@@ -934,7 +1020,6 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     const bgColor = Color(0xFF121623);
@@ -944,7 +1029,7 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
       if (_controller!.platform is AndroidWebViewController) {
         final params = AndroidWebViewWidgetCreationParams(
           controller: _controller!.platform,
-          displayWithHybridComposition: false,
+          displayWithHybridComposition: true,
         );
         webViewWidget = WebViewWidget.fromPlatformCreationParams(
           params: params,
@@ -966,7 +1051,6 @@ class _QurbWebViewScreenState extends State<QurbWebViewScreen> {
     );
   }
 }
-
 
 class NativeSettingsSheet extends StatefulWidget {
   final Map<String, dynamic> times;
@@ -1009,8 +1093,18 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
       final jsonStr = prefs.getString('salah_prayer_notifications_v3');
       Map<String, dynamic> loadedState = {
         'enabled': false,
-        'prayers': {'fajr': 'adhan', 'dhuhr': 'adhan', 'asr': 'adhan', 'maghrib': 'adhan', 'isha': 'adhan'},
-        'special': {'sunrise': 'beep', 'makruhStart': 'beep', 'makruhEnd': 'beep'},
+        'prayers': {
+          'fajr': 'adhan',
+          'dhuhr': 'adhan',
+          'asr': 'adhan',
+          'maghrib': 'adhan',
+          'isha': 'adhan'
+        },
+        'special': {
+          'sunrise': 'beep',
+          'makruhStart': 'beep',
+          'makruhEnd': 'beep'
+        },
         'dawah': {'morning': false, 'maghrib': false, 'sleep': false},
       };
       if (jsonStr != null) {
@@ -1019,7 +1113,7 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
           loadedState = parsed;
         } catch (e) {}
       }
-      
+
       // Ensure nested objects exist
       loadedState['prayers'] ??= {};
       loadedState['special'] ??= {};
@@ -1033,7 +1127,9 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
       }
     } catch (e) {
       if (mounted) {
-        setState(() { _isLoading = false; });
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -1042,52 +1138,71 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
     final jsonStr = jsonEncode(_state);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('salah_prayer_notifications_v3', jsonStr);
-    
+
     // Also save boolean flags so native BootReceiver functions correctly
     await prefs.setBool('notifications_enabled', _state['enabled'] == true);
-    
+
     final p = _state['prayers'];
-    if(p != null) {
-      await prefs.setBool('prayer_fajr_enabled', p['fajr'] != false && p['fajr'] != 'off');
-      await prefs.setBool('prayer_dhuhr_enabled', p['dhuhr'] != false && p['dhuhr'] != 'off');
-      await prefs.setBool('prayer_asr_enabled', p['asr'] != false && p['asr'] != 'off');
-      await prefs.setBool('prayer_maghrib_enabled', p['maghrib'] != false && p['maghrib'] != 'off');
-      await prefs.setBool('prayer_isha_enabled', p['isha'] != false && p['isha'] != 'off');
+    if (p != null) {
+      await prefs.setBool(
+          'prayer_fajr_enabled', p['fajr'] != false && p['fajr'] != 'off');
+      await prefs.setBool(
+          'prayer_dhuhr_enabled', p['dhuhr'] != false && p['dhuhr'] != 'off');
+      await prefs.setBool(
+          'prayer_asr_enabled', p['asr'] != false && p['asr'] != 'off');
+      await prefs.setBool('prayer_maghrib_enabled',
+          p['maghrib'] != false && p['maghrib'] != 'off');
+      await prefs.setBool(
+          'prayer_isha_enabled', p['isha'] != false && p['isha'] != 'off');
     }
     final s = _state['special'];
-    if(s != null) {
-      await prefs.setBool('special_sunrise_enabled', s['sunrise'] != false && s['sunrise'] != 'off');
-      await prefs.setBool('special_makruh_start_enabled', s['makruhStart'] != false && s['makruhStart'] != 'off');
-      await prefs.setBool('special_makruh_end_enabled', s['makruhEnd'] != false && s['makruhEnd'] != 'off');
-      await prefs.setBool('special_iqamah_alert_enabled', s['iqamahAlert'] == true);
-      await prefs.setBool('special_jummah_alert_enabled', s['jummahAlert'] == true);
+    if (s != null) {
+      await prefs.setBool('special_sunrise_enabled',
+          s['sunrise'] != false && s['sunrise'] != 'off');
+      await prefs.setBool('special_makruh_start_enabled',
+          s['makruhStart'] != false && s['makruhStart'] != 'off');
+      await prefs.setBool('special_makruh_end_enabled',
+          s['makruhEnd'] != false && s['makruhEnd'] != 'off');
+      await prefs.setBool(
+          'special_iqamah_alert_enabled', s['iqamahAlert'] == true);
+      await prefs.setBool(
+          'special_jummah_alert_enabled', s['jummahAlert'] == true);
     }
     final d = _state['dawah'];
-    if(d != null) {
+    if (d != null) {
       await prefs.setBool('dawah_morning_enabled', d['morning'] == true);
       await prefs.setBool('dawah_maghrib_enabled', d['maghrib'] == true);
       await prefs.setBool('dawah_sleep_enabled', d['sleep'] == true);
     }
-    
+
     widget.onSyncNeeded(jsonStr);
   }
 
   void _updatePrayer(String key, String val) {
-    setState(() { _state['prayers'][key] = val; });
-    _saveAndSync();
-  }
-  
-  void _updateSpecial(String key, String val) {
-    setState(() { _state['special'][key] = val; });
+    setState(() {
+      _state['prayers'][key] = val;
+    });
     _saveAndSync();
   }
 
-  Widget _buildDropdown(String title, String time, String currentValue, Function(String) onChanged) {
+  void _updateSpecial(String key, String val) {
+    setState(() {
+      _state['special'][key] = val;
+    });
+    _saveAndSync();
+  }
+
+  Widget _buildDropdown(String title, String time, String currentValue,
+      Function(String) onChanged) {
     return ListTile(
-      title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+      title: Text(title,
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
       subtitle: Text(time, style: const TextStyle(color: Colors.white60)),
       trailing: DropdownButton<String>(
-        value: (currentValue == 'true' ? 'adhan' : (currentValue == 'false' ? 'off' : currentValue)),
+        value: (currentValue == 'true'
+            ? 'adhan'
+            : (currentValue == 'false' ? 'off' : currentValue)),
         dropdownColor: const Color(0xFF1E2A38),
         style: const TextStyle(color: Colors.white, fontSize: 13),
         underline: Container(),
@@ -1104,9 +1219,12 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
     );
   }
 
-  Widget _buildSwitch(String title, String subtitle, bool currentValue, Function(bool) onChanged) {
+  Widget _buildSwitch(String title, String subtitle, bool currentValue,
+      Function(bool) onChanged) {
     return SwitchListTile(
-      title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+      title: Text(title,
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
       subtitle: Text(subtitle, style: const TextStyle(color: Colors.white60)),
       value: currentValue,
       activeColor: const Color(0xFFD48A56),
@@ -1120,7 +1238,8 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const SizedBox(height: 300, child: Center(child: CircularProgressIndicator()));
+      return const SizedBox(
+          height: 300, child: Center(child: CircularProgressIndicator()));
     }
 
     final p = _state['prayers'];
@@ -1132,7 +1251,11 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
       padding: const EdgeInsets.only(top: 20),
       child: Column(
         children: [
-          const Text("Native Notification Settings", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text("Native Notification Settings",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -1141,20 +1264,30 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
                 backgroundColor: const Color(0xFFD48A56),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              label: const Text("Allow / Request Notification Permission", style: TextStyle(color: Colors.white)),
+              label: const Text("Allow / Request Notification Permission",
+                  style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 final plugin = FlutterLocalNotificationsPlugin();
-                await plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+                await plugin
+                    .resolvePlatformSpecificImplementation<
+                        AndroidFlutterLocalNotificationsPlugin>()
+                    ?.requestNotificationsPermission();
               },
             ),
           ),
           SwitchListTile(
-            title: const Text("Master Switch", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: const Text("Enable or disable all background notifications natively.", style: TextStyle(color: Colors.white60)),
+            title: const Text("Master Switch",
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+            subtitle: const Text(
+                "Enable or disable all background notifications natively.",
+                style: TextStyle(color: Colors.white60)),
             value: _state['enabled'] == true,
             activeColor: const Color(0xFF4A90E2),
             onChanged: (val) {
-              setState(() { _state['enabled'] = val; });
+              setState(() {
+                _state['enabled'] = val;
+              });
               _saveAndSync();
             },
           ),
@@ -1164,26 +1297,82 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text("Prayer & Event Alerts", style: TextStyle(color: Color(0xFFD48A56), fontWeight: FontWeight.bold, fontSize: 14)),
+                  child: Text("Prayer & Event Alerts",
+                      style: TextStyle(
+                          color: Color(0xFFD48A56),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14)),
                 ),
-                _buildDropdown(_prayerNames['fajr']!, widget.times['fajr'] ?? '—', p['fajr'] ?? 'adhan', (v) => _updatePrayer('fajr', v)),
-                _buildDropdown(_prayerNames['sunrise']!, widget.times['sunrise'] ?? '—', s['sunrise'] ?? 'beep', (v) => _updateSpecial('sunrise', v)),
-                _buildDropdown(_prayerNames['makruhStart']!, widget.times['makruhStart'] ?? '—', s['makruhStart'] ?? 'beep', (v) => _updateSpecial('makruhStart', v)),
-                _buildDropdown(_prayerNames['makruhEnd']!, widget.times['makruhEnd'] ?? '—', s['makruhEnd'] ?? 'beep', (v) => _updateSpecial('makruhEnd', v)),
-                _buildDropdown(_prayerNames['dhuhr']!, widget.times['dhuhr'] ?? '—', p['dhuhr'] ?? 'adhan', (v) => _updatePrayer('dhuhr', v)),
-                _buildDropdown(_prayerNames['asr']!, widget.times['asr'] ?? '—', p['asr'] ?? 'adhan', (v) => _updatePrayer('asr', v)),
-                _buildDropdown(_prayerNames['maghrib']!, widget.times['maghrib'] ?? '—', p['maghrib'] ?? 'adhan', (v) => _updatePrayer('maghrib', v)),
-                _buildDropdown(_prayerNames['isha']!, widget.times['isha'] ?? '—', p['isha'] ?? 'adhan', (v) => _updatePrayer('isha', v)),
-                
+                _buildDropdown(
+                    _prayerNames['fajr']!,
+                    widget.times['fajr'] ?? '—',
+                    p['fajr'] ?? 'adhan',
+                    (v) => _updatePrayer('fajr', v)),
+                _buildDropdown(
+                    _prayerNames['sunrise']!,
+                    widget.times['sunrise'] ?? '—',
+                    s['sunrise'] ?? 'beep',
+                    (v) => _updateSpecial('sunrise', v)),
+                _buildDropdown(
+                    _prayerNames['makruhStart']!,
+                    widget.times['makruhStart'] ?? '—',
+                    s['makruhStart'] ?? 'beep',
+                    (v) => _updateSpecial('makruhStart', v)),
+                _buildDropdown(
+                    _prayerNames['makruhEnd']!,
+                    widget.times['makruhEnd'] ?? '—',
+                    s['makruhEnd'] ?? 'beep',
+                    (v) => _updateSpecial('makruhEnd', v)),
+                _buildDropdown(
+                    _prayerNames['dhuhr']!,
+                    widget.times['dhuhr'] ?? '—',
+                    p['dhuhr'] ?? 'adhan',
+                    (v) => _updatePrayer('dhuhr', v)),
+                _buildDropdown(_prayerNames['asr']!, widget.times['asr'] ?? '—',
+                    p['asr'] ?? 'adhan', (v) => _updatePrayer('asr', v)),
+                _buildDropdown(
+                    _prayerNames['maghrib']!,
+                    widget.times['maghrib'] ?? '—',
+                    p['maghrib'] ?? 'adhan',
+                    (v) => _updatePrayer('maghrib', v)),
+                _buildDropdown(
+                    _prayerNames['isha']!,
+                    widget.times['isha'] ?? '—',
+                    p['isha'] ?? 'adhan',
+                    (v) => _updatePrayer('isha', v)),
                 const Divider(color: Colors.white24),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text("Da'wah & Motivation Reminders", style: TextStyle(color: Color(0xFFD48A56), fontWeight: FontWeight.bold, fontSize: 14)),
+                  child: Text("Da'wah & Motivation Reminders",
+                      style: TextStyle(
+                          color: Color(0xFFD48A56),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14)),
                 ),
-                _buildSwitch("Morning Motivation", "Spiritual reminder at Fajr time (05:30 AM).", d['morning'] == true, (v) { setState(() { d['morning'] = v; }); }),
-                _buildSwitch("Post-Maghrib Adhkar", "Surah and Salawat reminder 15 mins after Maghrib.", d['maghrib'] == true, (v) { setState(() { d['maghrib'] = v; }); }),
-                _buildSwitch("Sunnah Early Sleep", "Sleep reminder 60 mins after Isha.", d['sleep'] == true, (v) { setState(() { d['sleep'] = v; }); }),
-                
+                _buildSwitch(
+                    "Morning Motivation",
+                    "Spiritual reminder at Fajr time (05:30 AM).",
+                    d['morning'] == true, (v) {
+                  setState(() {
+                    d['morning'] = v;
+                  });
+                }),
+                _buildSwitch(
+                    "Post-Maghrib Adhkar",
+                    "Surah and Salawat reminder 15 mins after Maghrib.",
+                    d['maghrib'] == true, (v) {
+                  setState(() {
+                    d['maghrib'] = v;
+                  });
+                }),
+                _buildSwitch(
+                    "Sunnah Early Sleep",
+                    "Sleep reminder 60 mins after Isha.",
+                    d['sleep'] == true, (v) {
+                  setState(() {
+                    d['sleep'] = v;
+                  });
+                }),
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -1209,7 +1398,8 @@ class _NativeSettingsSheetState extends State<NativeSettingsSheet> {
                         ),
                       );
                     },
-                    child: const Text("🔔 Test Native Notification", style: TextStyle(color: Colors.white)),
+                    child: const Text("🔔 Test Native Notification",
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(height: 40),
