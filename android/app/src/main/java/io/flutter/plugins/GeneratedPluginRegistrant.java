@@ -71,9 +71,9 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin path_provider_android, io.flutter.plugins.pathprovider.PathProviderPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new com.khokanuzzman.pdf_render_maintained.PdfRenderPlugin());
+      flutterEngine.getPlugins().add(new io.scer.pdfx.PdfxPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin pdf_render_maintained, com.khokanuzzman.pdf_render_maintained.PdfRenderPlugin", e);
+      Log.e(TAG, "Error registering plugin pdfx, io.scer.pdfx.PdfxPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new com.baseflow.permissionhandler.PermissionHandlerPlugin());
